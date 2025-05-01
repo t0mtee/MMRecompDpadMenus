@@ -1,0 +1,213 @@
+#include "modding.h"
+#include "overlays/gamestates/ovl_file_choose/z_file_select.h"
+#include "overlays/kaleido_scope/ovl_kaleido_scope/z_kaleido_scope.h"
+// @mod If you get an error with these headers, you need to build mm-decomp yourself and copy the headers into the include folder manually.
+// @mod You also need to copy the headers those headers need.
+#include "z_en_sob1.h"
+#include "overlays/actors/ovl_En_Trt/z_en_trt.h"
+#include "z_en_fsn.h"
+#include "z_en_ossan.h"
+
+#define DPAD_CHECK(button, X, Y)    if (CHECK_BTN_ANY(button, BTN_DLEFT)) {\
+                                        X = -31;\
+                                    }\
+                                    if (CHECK_BTN_ANY(button, BTN_DRIGHT)) {\
+                                        X = 31;\
+                                    }\
+                                    if (CHECK_BTN_ANY(button, BTN_DDOWN)) {\
+                                        Y = -31;\
+                                    }\
+                                    if (CHECK_BTN_ANY(button, BTN_DUP)) {\
+                                        Y = 31;\
+                                    }
+
+s32 stickX;
+s32 stickY;
+
+// @mod Name selection. Store stick positions, if D-pad is being pressed, change stick positions to trick function. Then revert to original values.
+FileSelectState* fileSelectState;
+
+RECOMP_HOOK("FileSelect_UpdateKeyboardCursor") void FileSelect_UpdateKeyboardCursor_Init(GameState* thisx) {
+    Input* input = CONTROLLER1(thisx);
+
+    fileSelectState = (FileSelectState*)thisx;
+    stickX = fileSelectState->stickAdjX;
+    stickY = fileSelectState->stickAdjY;
+
+    DPAD_CHECK(input->press.button, fileSelectState->stickAdjX, fileSelectState->stickAdjY)
+}
+
+RECOMP_HOOK_RETURN("FileSelect_UpdateKeyboardCursor") void FileSelect_UpdateKeyboardCursor_Return() {
+    fileSelectState->stickAdjX = stickX;
+    fileSelectState->stickAdjX = stickY;
+}
+
+// @mod Main menu
+Input* gInput;
+
+RECOMP_HOOK("FileSelect_Main") void FileSelect_Main_Init(GameState* thisx) {
+    gInput = CONTROLLER1(thisx);
+    stickX = gInput->rel.stick_x;
+    stickY = gInput->rel.stick_y;
+
+    DPAD_CHECK(gInput->press.button, gInput->rel.stick_x, gInput->rel.stick_y)
+}
+
+RECOMP_HOOK_RETURN("FileSelect_Main") void FileSelect_Main_Return() {
+    gInput->rel.stick_x = stickX;
+    gInput->rel.stick_y = stickY;
+}
+
+#define INPUT_INIT      gInput = CONTROLLER1(&play->state);\
+                        stickX = gInput->rel.stick_x;\
+                        stickY = gInput->rel.stick_y;\
+                        DPAD_CHECK(gInput->press.button, gInput->rel.stick_x, gInput->rel.stick_y)
+
+#define INPUT_RETURN    gInput->rel.stick_x = stickX;\
+                        gInput->rel.stick_y = stickY;
+
+// @mod Messages
+
+RECOMP_HOOK("Message_Update") void Message_Update_Init(PlayState* play, u8 numChoices) {
+    INPUT_INIT
+}
+
+RECOMP_HOOK_RETURN("Message_Update") void Message_Update_Return() {
+    INPUT_RETURN
+}
+
+// @mod General shops
+
+RECOMP_HOOK("EnSob1_UpdateJoystickInputState") void EnSob1_UpdateJoystickInputState_Init(PlayState* play, EnSob1* this) {
+    INPUT_INIT
+}
+
+RECOMP_HOOK_RETURN("EnSob1_UpdateJoystickInputState") void EnSob1_UpdateJoystickInputState_Return() {
+    INPUT_RETURN
+}
+
+// @mod Trading Post
+
+RECOMP_HOOK("EnOssan_UpdateJoystickInputState") void EnOssan_UpdateJoystickInputState_Init(PlayState* play, EnOssan* this) {
+    INPUT_INIT
+}
+
+RECOMP_HOOK_RETURN("EnOssan_UpdateJoystickInputState") void EnOssan_UpdateJoystickInputState_Return() {
+    INPUT_RETURN
+}
+
+// @mod Curiosity Shop
+
+RECOMP_HOOK("EnFsn_UpdateJoystickInputState") void EnFsn_UpdateJoystickInputState_Init(PlayState* play, EnFsn* this) {
+    INPUT_INIT
+}
+
+RECOMP_HOOK_RETURN("EnFsn_UpdateJoystickInputState") void EnFsn_UpdateJoystickInputState_Return() {
+    INPUT_RETURN
+}
+
+// @mod Kotake
+
+RECOMP_HOOK("EnTrt_UpdateJoystickInputState") void EnTrt_UpdateJoystickInputState_Init(PlayState* play, EnTrt* this) {
+    INPUT_INIT
+}
+
+RECOMP_HOOK_RETURN("EnTrt_UpdateJoystickInputState") void EnTrt_UpdateJoystickInputState_Return() {
+    INPUT_RETURN
+}
+
+// @mod Bomber's Notebook
+
+RECOMP_HOOK("BombersNotebook_Update") void BombersNotebook_Update_Init(PlayState* play, BombersNotebook* this, Input* input) {
+    INPUT_INIT
+}
+
+RECOMP_HOOK_RETURN("BombersNotebook_Update") void BombersNotebook_Update_Return() {
+    INPUT_RETURN
+}
+
+// @mod Required for Kaleido to work. Disables D-pad switching the kaleido sections.
+
+u16 button;
+PauseContext* pauseCtx;
+
+RECOMP_HOOK("KaleidoScope_HandlePageToggles") void KaleidoScope_HandlePageToggles_Init(PlayState* play, Input* input) {
+    pauseCtx = &play->pauseCtx;
+    stickX = pauseCtx->stickAdjX;
+
+    if (CHECK_BTN_ANY(input->press.button, BTN_DLEFT)) {
+        pauseCtx->stickAdjX = -31;
+    }
+
+    if (CHECK_BTN_ANY(input->press.button, BTN_DRIGHT)) {
+        pauseCtx->stickAdjX = 31;
+    }
+
+    gInput = input;
+    button = gInput->cur.button;
+    input->cur.button &= ~(BTN_DRIGHT | BTN_DLEFT);
+}
+
+RECOMP_HOOK_RETURN("KaleidoScope_HandlePageToggles") void KaleidoScope_HandlePageToggles_Return() {
+    gInput->cur.button = button;
+    pauseCtx->stickAdjX = stickX;
+}
+
+#define KALEIDO_INIT    Input* input = CONTROLLER1(&play->state);\
+                        pauseCtx = &play->pauseCtx;\
+                        stickX = pauseCtx->stickAdjX;\
+                        stickY = pauseCtx->stickAdjY;\
+                        DPAD_CHECK(input->press.button, pauseCtx->stickAdjX, pauseCtx->stickAdjY)
+
+#define KALEIDO_RETURN  pauseCtx->stickAdjX = stickX;\
+                        pauseCtx->stickAdjY = stickY;\
+
+// @mod Kaleido items
+
+RECOMP_HOOK("KaleidoScope_UpdateItemCursor") void KaleidoScope_UpdateItemCursor_Init(PlayState* play) {
+    KALEIDO_INIT
+}
+
+RECOMP_HOOK_RETURN("KaleidoScope_UpdateItemCursor") void KaleidoScope_UpdateItemCursor_Return() {
+    KALEIDO_RETURN
+}
+
+// @mod Kaleido masks
+
+RECOMP_HOOK("KaleidoScope_UpdateMaskCursor") void KaleidoScope_UpdateMaskCursor_Init(PlayState* play) {
+    KALEIDO_INIT
+}
+
+RECOMP_HOOK_RETURN("KaleidoScope_UpdateMaskCursor") void KaleidoScope_UpdateMaskCursor_Return() {
+    KALEIDO_RETURN
+}
+
+// @mod Kaleido quests
+
+RECOMP_HOOK("KaleidoScope_UpdateQuestCursor") void KaleidoScope_UpdateQuestCursor_Init(PlayState* play) {
+    KALEIDO_INIT
+}
+
+RECOMP_HOOK_RETURN("KaleidoScope_UpdateQuestCursor") void KaleidoScope_UpdateQuestCursor_Return() {
+    KALEIDO_RETURN
+}
+
+// @mod Kaleido map
+
+RECOMP_HOOK("KaleidoScope_UpdateWorldMapCursor") void KaleidoScope_UpdateWorldMapCursor_Init(PlayState* play) {
+    KALEIDO_INIT
+}
+
+RECOMP_HOOK_RETURN("KaleidoScope_UpdateWorldMapCursor") void KaleidoScope_UpdateWorldMapCursor_Return() {
+    KALEIDO_RETURN
+}
+
+// @mod Dungeon map
+
+RECOMP_HOOK("KaleidoScope_UpdateDungeonCursor") void KaleidoScope_UpdateDungeonCursor_Init(PlayState* play) {
+    KALEIDO_INIT
+}
+
+RECOMP_HOOK_RETURN("KaleidoScope_UpdateDungeonCursor") void KaleidoScope_UpdateDungeonCursor_Return() {
+    KALEIDO_RETURN
+}
