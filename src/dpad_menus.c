@@ -11,52 +11,15 @@
 #define DPAD_CHECK(button, X, Y)    if (CHECK_BTN_ANY(button, BTN_DLEFT)) {\
                                         X = -31;\
                                     }\
-                                    if (CHECK_BTN_ANY(button, BTN_DRIGHT)) {\
+                                    else if (CHECK_BTN_ANY(button, BTN_DRIGHT)) {\
                                         X = 31;\
                                     }\
                                     if (CHECK_BTN_ANY(button, BTN_DDOWN)) {\
                                         Y = -31;\
                                     }\
-                                    if (CHECK_BTN_ANY(button, BTN_DUP)) {\
+                                    else if (CHECK_BTN_ANY(button, BTN_DUP)) {\
                                         Y = 31;\
                                     }
-
-s32 stickX;
-s32 stickY;
-
-// @mod Name selection. Store stick positions, if D-pad is being pressed, change stick positions to trick function. Then revert to original values.
-FileSelectState* fileSelectState;
-
-RECOMP_HOOK("FileSelect_UpdateKeyboardCursor") void FileSelect_UpdateKeyboardCursor_Init(GameState* thisx) {
-    Input* input = CONTROLLER1(thisx);
-
-    fileSelectState = (FileSelectState*)thisx;
-    stickX = fileSelectState->stickAdjX;
-    stickY = fileSelectState->stickAdjY;
-
-    DPAD_CHECK(input->press.button, fileSelectState->stickAdjX, fileSelectState->stickAdjY)
-}
-
-RECOMP_HOOK_RETURN("FileSelect_UpdateKeyboardCursor") void FileSelect_UpdateKeyboardCursor_Return() {
-    fileSelectState->stickAdjX = stickX;
-    fileSelectState->stickAdjX = stickY;
-}
-
-// @mod Main menu
-Input* gInput;
-
-RECOMP_HOOK("FileSelect_Main") void FileSelect_Main_Init(GameState* thisx) {
-    gInput = CONTROLLER1(thisx);
-    stickX = gInput->rel.stick_x;
-    stickY = gInput->rel.stick_y;
-
-    DPAD_CHECK(gInput->press.button, gInput->rel.stick_x, gInput->rel.stick_y)
-}
-
-RECOMP_HOOK_RETURN("FileSelect_Main") void FileSelect_Main_Return() {
-    gInput->rel.stick_x = stickX;
-    gInput->rel.stick_y = stickY;
-}
 
 #define INPUT_INIT      gInput = CONTROLLER1(&play->state);\
                         stickX = gInput->rel.stick_x;\
@@ -65,6 +28,25 @@ RECOMP_HOOK_RETURN("FileSelect_Main") void FileSelect_Main_Return() {
 
 #define INPUT_RETURN    gInput->rel.stick_x = stickX;\
                         gInput->rel.stick_y = stickY;
+
+s32 stickX;
+s32 stickY;
+
+// @mod Main menu
+Input* gInput;
+
+RECOMP_HOOK("FileSelect_Main") void FileSelect_Main_Init(GameState* thisx) {
+    gInput = CONTROLLER1(thisx);
+
+    stickX = gInput->rel.stick_x;
+    stickY = gInput->rel.stick_y;
+
+    DPAD_CHECK(gInput->press.button, gInput->rel.stick_x, gInput->rel.stick_y)
+}
+
+RECOMP_HOOK_RETURN("FileSelect_Main") void FileSelect_Main_Return() {
+    INPUT_RETURN
+}
 
 // @mod Messages
 
@@ -153,61 +135,21 @@ RECOMP_HOOK_RETURN("KaleidoScope_HandlePageToggles") void KaleidoScope_HandlePag
     pauseCtx->stickAdjX = stickX;
 }
 
-#define KALEIDO_INIT    Input* input = CONTROLLER1(&play->state);\
-                        pauseCtx = &play->pauseCtx;\
-                        stickX = pauseCtx->stickAdjX;\
-                        stickY = pauseCtx->stickAdjY;\
-                        DPAD_CHECK(input->press.button, pauseCtx->stickAdjX, pauseCtx->stickAdjY)
+// @mod Kaleido
 
-#define KALEIDO_RETURN  pauseCtx->stickAdjX = stickX;\
-                        pauseCtx->stickAdjY = stickY;\
+RECOMP_HOOK("KaleidoScope_Update") void KaleidoScope_Update_Init(PlayState* play) {
+    gInput = CONTROLLER1(&play->state);
+    PauseContext* pauseCtx = &play->pauseCtx;
 
-// @mod Kaleido items
+    stickX = gInput->rel.stick_x;
+    stickY = gInput->rel.stick_y;
 
-RECOMP_HOOK("KaleidoScope_UpdateItemCursor") void KaleidoScope_UpdateItemCursor_Init(PlayState* play) {
-    KALEIDO_INIT
+    // @mod Allow songs to played with D-pad in pause screen
+    if (!IS_PAUSE_MAIN_STATE_SONG_PROMPT(pauseCtx)) {
+        DPAD_CHECK(gInput->press.button, gInput->rel.stick_x, gInput->rel.stick_y)
+    }
 }
 
-RECOMP_HOOK_RETURN("KaleidoScope_UpdateItemCursor") void KaleidoScope_UpdateItemCursor_Return() {
-    KALEIDO_RETURN
-}
-
-// @mod Kaleido masks
-
-RECOMP_HOOK("KaleidoScope_UpdateMaskCursor") void KaleidoScope_UpdateMaskCursor_Init(PlayState* play) {
-    KALEIDO_INIT
-}
-
-RECOMP_HOOK_RETURN("KaleidoScope_UpdateMaskCursor") void KaleidoScope_UpdateMaskCursor_Return() {
-    KALEIDO_RETURN
-}
-
-// @mod Kaleido quests
-
-RECOMP_HOOK("KaleidoScope_UpdateQuestCursor") void KaleidoScope_UpdateQuestCursor_Init(PlayState* play) {
-    KALEIDO_INIT
-}
-
-RECOMP_HOOK_RETURN("KaleidoScope_UpdateQuestCursor") void KaleidoScope_UpdateQuestCursor_Return() {
-    KALEIDO_RETURN
-}
-
-// @mod Kaleido map
-
-RECOMP_HOOK("KaleidoScope_UpdateWorldMapCursor") void KaleidoScope_UpdateWorldMapCursor_Init(PlayState* play) {
-    KALEIDO_INIT
-}
-
-RECOMP_HOOK_RETURN("KaleidoScope_UpdateWorldMapCursor") void KaleidoScope_UpdateWorldMapCursor_Return() {
-    KALEIDO_RETURN
-}
-
-// @mod Dungeon map
-
-RECOMP_HOOK("KaleidoScope_UpdateDungeonCursor") void KaleidoScope_UpdateDungeonCursor_Init(PlayState* play) {
-    KALEIDO_INIT
-}
-
-RECOMP_HOOK_RETURN("KaleidoScope_UpdateDungeonCursor") void KaleidoScope_UpdateDungeonCursor_Return() {
-    KALEIDO_RETURN
+RECOMP_HOOK_RETURN("KaleidoScope_Update") void KaleidoScope_Update_Return() {
+    INPUT_RETURN
 }
