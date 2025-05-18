@@ -119,19 +119,6 @@ EZTR_ON_INIT void replace_msgs() {
     );
 
     EZTR_Basic_ReplaceText(
-        0x2A00,
-        EZTR_INVISIBLE_TEXT_BOX_IV,
-        1,
-        EZTR_ICON_NO_ICON,
-        EZTR_NO_VALUE,
-        EZTR_NO_VALUE,
-        EZTR_NO_VALUE,
-        true,
-        "|BB or |04D-pad|00 Move   |B1 Quit|BF",
-        NULL
-    );
-
-    EZTR_Basic_ReplaceText(
         0x2B5F,
         EZTR_STANDARD_TEXT_BOX_II,
         1,

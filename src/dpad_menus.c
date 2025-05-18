@@ -1,8 +1,8 @@
 #include "modding.h"
 #include "overlays/gamestates/ovl_file_choose/z_file_select.h"
 #include "overlays/kaleido_scope/ovl_kaleido_scope/z_kaleido_scope.h"
-// @mod If you get an error with these headers, you need to build mm-decomp yourself and copy the headers into the include folder manually.
-// @mod You also need to copy the headers those headers need.
+// If you get an error with these headers, you need to build mm-decomp yourself and copy the headers into the include folder manually.
+// You also need to copy the headers those headers need.
 #include "z_en_sob1.h"
 #include "overlays/actors/ovl_En_Trt/z_en_trt.h"
 #include "z_en_fsn.h"
@@ -32,7 +32,7 @@
 s32 stickX;
 s32 stickY;
 
-// @mod Main menu
+// Main menu
 Input* gInput;
 
 RECOMP_HOOK("FileSelect_Main") void FileSelect_Main_Init(GameState* thisx) {
@@ -48,7 +48,7 @@ RECOMP_HOOK_RETURN("FileSelect_Main") void FileSelect_Main_Return() {
     INPUT_RETURN
 }
 
-// @mod Messages
+// Messages
 
 RECOMP_HOOK("Message_Update") void Message_Update_Init(PlayState* play, u8 numChoices) {
     INPUT_INIT
@@ -58,7 +58,7 @@ RECOMP_HOOK_RETURN("Message_Update") void Message_Update_Return() {
     INPUT_RETURN
 }
 
-// @mod General shops
+// General shops
 
 RECOMP_HOOK("EnSob1_UpdateJoystickInputState") void EnSob1_UpdateJoystickInputState_Init(PlayState* play, EnSob1* this) {
     INPUT_INIT
@@ -68,7 +68,7 @@ RECOMP_HOOK_RETURN("EnSob1_UpdateJoystickInputState") void EnSob1_UpdateJoystick
     INPUT_RETURN
 }
 
-// @mod Trading Post
+// Trading Post
 
 RECOMP_HOOK("EnOssan_UpdateJoystickInputState") void EnOssan_UpdateJoystickInputState_Init(PlayState* play, EnOssan* this) {
     INPUT_INIT
@@ -78,9 +78,9 @@ RECOMP_HOOK_RETURN("EnOssan_UpdateJoystickInputState") void EnOssan_UpdateJoysti
     INPUT_RETURN
 }
 
-// @mod Curiosity Shop
+// Curiosity Shop
 
-RECOMP_HOOK("EnFsn_UpdateJoystickInputState") void EnFsn_UpdateJoystickInputState_Init(PlayState* play, EnFsn* this) {
+RECOMP_HOOK("EnFsn_UpdateJoystickInputState") void EnFsn_UpdateJoystickInputState_Init(EnFsn* this, PlayState* play) {
     INPUT_INIT
 }
 
@@ -88,7 +88,7 @@ RECOMP_HOOK_RETURN("EnFsn_UpdateJoystickInputState") void EnFsn_UpdateJoystickIn
     INPUT_RETURN
 }
 
-// @mod Kotake
+// Kotake
 
 RECOMP_HOOK("EnTrt_UpdateJoystickInputState") void EnTrt_UpdateJoystickInputState_Init(PlayState* play, EnTrt* this) {
     INPUT_INIT
@@ -98,7 +98,7 @@ RECOMP_HOOK_RETURN("EnTrt_UpdateJoystickInputState") void EnTrt_UpdateJoystickIn
     INPUT_RETURN
 }
 
-// @mod Bomber's Notebook
+// Bomber's Notebook
 
 RECOMP_HOOK("BombersNotebook_Update") void BombersNotebook_Update_Init(PlayState* play, BombersNotebook* this, Input* input) {
     INPUT_INIT
@@ -108,7 +108,7 @@ RECOMP_HOOK_RETURN("BombersNotebook_Update") void BombersNotebook_Update_Return(
     INPUT_RETURN
 }
 
-// @mod Required for Kaleido to work. Disables D-pad switching the kaleido sections.
+// Required for Kaleido to work. Disables D-pad switching the kaleido sections.
 
 u16 button;
 PauseContext* pauseCtx;
@@ -135,7 +135,7 @@ RECOMP_HOOK_RETURN("KaleidoScope_HandlePageToggles") void KaleidoScope_HandlePag
     pauseCtx->stickAdjX = stickX;
 }
 
-// @mod Kaleido
+// Kaleido
 
 RECOMP_HOOK("KaleidoScope_Update") void KaleidoScope_Update_Init(PlayState* play) {
     gInput = CONTROLLER1(&play->state);
@@ -144,7 +144,7 @@ RECOMP_HOOK("KaleidoScope_Update") void KaleidoScope_Update_Init(PlayState* play
     stickX = gInput->rel.stick_x;
     stickY = gInput->rel.stick_y;
 
-    // @mod Allow songs to played with D-pad in pause screen
+    // Allow songs to played with D-pad in pause screen
     if (!IS_PAUSE_MAIN_STATE_SONG_PROMPT(pauseCtx)) {
         DPAD_CHECK(gInput->press.button, gInput->rel.stick_x, gInput->rel.stick_y)
     }
