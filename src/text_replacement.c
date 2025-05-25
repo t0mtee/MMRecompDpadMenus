@@ -127,7 +127,7 @@ EZTR_ON_INIT void replace_msgs() {
         EZTR_NO_VALUE,
         EZTR_NO_VALUE,
         true,
-        "OK. Enter your number.|11|02 |D5|11|00Select numbers with |BB or the |04D-pad|00.|11Press |B0 to confirm.|BF",
+        "OK. Enter your number.|11|02|D5|11|00Select numbers with |BB or the |04D-pad|00.|11Press |B0 to confirm.|BF",
         NULL
     );
 
