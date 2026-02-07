@@ -68,3 +68,11 @@ data_reference_syms_files = [ "Zelda64RecompSyms/mm.us.rev1.datasyms.toml", "Zel
 additional_files = [
     "thumb.png"
 ]
+
+[[manifest.config_options]]
+id = "repeat_inputs"
+name = "Repeat Inputs"
+description = "Enable this if you want D-pad inputs to repeat when the button is held down. Disable if you want the input to only occur on one frame."
+type = "Enum"
+options = [ "Disable", "Enable" ]
+default = "Disable"

@@ -8,6 +8,15 @@
 #include "z_en_fsn.h"
 #include "z_en_ossan.h"
 
+RECOMP_IMPORT("*", unsigned long recomp_get_config_u32(const char* key));
+
+u16 GetButtonState(Input* input) {
+    if (recomp_get_config_u32("repeat_inputs")) {
+        return input->cur.button;
+    }
+    return input->press.button;
+}
+
 #define DPAD_CHECK(button, X, Y)    if (CHECK_BTN_ANY(button, BTN_DLEFT)) {\
                                         X = -31;\
                                     }\
@@ -24,7 +33,7 @@
 #define INPUT_INIT      gInput = CONTROLLER1(&play->state);\
                         stickX = gInput->rel.stick_x;\
                         stickY = gInput->rel.stick_y;\
-                        DPAD_CHECK(gInput->press.button, gInput->rel.stick_x, gInput->rel.stick_y)
+                        DPAD_CHECK(GetButtonState(gInput), gInput->rel.stick_x, gInput->rel.stick_y)
 
 #define INPUT_RETURN    gInput->rel.stick_x = stickX;\
                         gInput->rel.stick_y = stickY;
@@ -41,7 +50,7 @@ RECOMP_HOOK("FileSelect_Main") void FileSelect_Main_Init(GameState* thisx) {
     stickX = gInput->rel.stick_x;
     stickY = gInput->rel.stick_y;
 
-    DPAD_CHECK(gInput->press.button, gInput->rel.stick_x, gInput->rel.stick_y)
+    DPAD_CHECK(GetButtonState(gInput), gInput->rel.stick_x, gInput->rel.stick_y)
 }
 
 RECOMP_HOOK_RETURN("FileSelect_Main") void FileSelect_Main_Return() {
@@ -146,7 +155,7 @@ RECOMP_HOOK("KaleidoScope_Update") void KaleidoScope_Update_Init(PlayState* play
 
     // Allow songs to played with D-pad in pause screen
     if (!IS_PAUSE_MAIN_STATE_SONG_PROMPT(pauseCtx)) {
-        DPAD_CHECK(gInput->press.button, gInput->rel.stick_x, gInput->rel.stick_y)
+        DPAD_CHECK(GetButtonState(gInput), gInput->rel.stick_x, gInput->rel.stick_y)
     }
 }
 
