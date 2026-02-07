@@ -153,7 +153,7 @@ EZTR_ON_INIT void replace_msgs() {
         EZTR_NO_VALUE,
         EZTR_NO_VALUE,
         true,
-        "|01Ocarina of Time|11|00This musical instrument is filled|11with memories of Princess Zelda.|11|12Play it with |B0 and |BB or the |04D-pad|00.|11Press |B1 to stop.|BF",
+        "|01Ocarina of Time|11|00This musical instrument is filled|11with memories of Princess Zelda.|11|12Play it with |B0 and |B2 or the |04D-pad|00.|11Press |B1 to stop.|BF",
         NULL
     );
 
@@ -166,7 +166,7 @@ EZTR_ON_INIT void replace_msgs() {
         EZTR_NO_VALUE,
         EZTR_NO_VALUE,
         true,
-        "|17You got the |01Ocarina of Time|11|00back!|18|11|1F|00|0A|01Princess Zelda|00 gave you this|11precious instrument.|10Set it to |04|B2|00 and play it with |B0 and|11|BB or the |04D-pad|00. Press |B1 to stop.|11|12...Suddenly, memories of |01Princess|11Zelda |00come rushing back to you...|BF",
+        "|17You got the |01Ocarina of Time|11|00back!|18|11|1F|00|0A|01Princess Zelda|00 gave you this|11precious instrument.|10Set it to |04|B2|00 and play it with |B0 and|11|B2 or the |04D-pad|00. Press |B1 to stop.|11|12...Suddenly, memories of |01Princess|11Zelda |00come rushing back to you...|BF",
         NULL
     );
 
@@ -179,7 +179,7 @@ EZTR_ON_INIT void replace_msgs() {
         EZTR_NO_VALUE,
         EZTR_NO_VALUE,
         true,
-        "Play it with |B0 and |BB or the |04D-pad|00.|BF",
+        "Play it with |B0 and |B2 or the |04D-pad|00.|BF",
         NULL
     );
 
@@ -192,7 +192,7 @@ EZTR_ON_INIT void replace_msgs() {
         EZTR_NO_VALUE,
         EZTR_NO_VALUE,
         true,
-        "Play with |B0 and |BB or the |04D-pad|00.|BF",
+        "Play with |B0 and |B2 or the |04D-pad|00.|BF",
         NULL
     );
 }
